@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tie-Breaker Showdown</title>
+<style>
+html{background:#F4FAF9}
+body{margin:0;padding:16px;background:#F4FAF9;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;color:#17302D}
+.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap}
+#tb{--m:#2F7F79;--mD:#1F5C57;--ln:#BFDCD6;max-width:560px;margin:0 auto;padding:.5rem 0 1rem}
+#tb *{box-sizing:border-box}
+#tb .card{background:#EAF4F2;border:1px solid var(--ln);border-radius:16px;padding:20px 16px;color:#17302D}
+#tb .card p,#tb .card div,#tb .card span{color:inherit}
+#tb h1{font-size:24px;font-weight:600;margin:0 0 6px;color:#1F5C57}
+#tb p{margin:0;line-height:1.6}
+#tb .sub{font-size:16px;color:#3F5F5B}
+#tb .meta{display:flex;justify-content:space-between;font-size:14px;color:#3F5F5B;margin-bottom:10px}
+#tb .bar{height:6px;background:#CFE6E1;border-radius:3px;margin-bottom:16px}
+#tb .bar div{height:6px;background:#2F7F79;border-radius:3px}
+#tb .tag{display:inline-block;font-size:13px;font-weight:600;color:#1F5C57;background:#D4EAE5;padding:4px 10px;border-radius:8px;margin-bottom:10px}
+#tb .q{font-size:18px;line-height:1.6;margin-bottom:16px;color:#17302D}
+#tb .opt{display:flex;align-items:flex-start;gap:10px;width:100%;min-height:64px;text-align:left;font-size:17px;line-height:1.45;padding:14px 16px;margin:0 0 12px;background:#FFFFFF;color:#17302D;border:2px solid #BFDCD6;border-radius:12px;cursor:pointer;user-select:none;-webkit-tap-highlight-color:transparent}
+#tb .opt .l{flex:0 0 auto;font-weight:600;color:#2F7F79}
+#tb .opt .tx{flex:1 1 auto;color:inherit}
+#tb .opt.right{background:#E3F3EA;border-color:#9FD1B3;color:#1F5A3A}
+#tb .opt.right .l{color:#1F5A3A}
+#tb .opt.wrong{background:#FBF1DC;border-color:#E8C98A;color:#6B4A12}
+#tb .opt.wrong .l{color:#6B4A12}
+#tb .opt.dim{opacity:.65;cursor:default}
+#tb .btn{display:flex;align-items:center;justify-content:center;width:100%;min-height:56px;font-size:17px;font-weight:600;background:#2F7F79;color:#FFFFFF;border:2px solid #2F7F79;border-radius:12px;cursor:pointer;margin-top:4px;user-select:none;text-align:center}
+#tb .btn.alt{background:#FFFFFF;color:#1F5C57}
+#tb .verdict{font-size:17px;font-weight:600;padding:12px 14px;border-radius:12px;margin:4px 0 12px}
+#tb .verdict.good{background:#E3F3EA;color:#1F5A3A}
+#tb .verdict.try{background:#FBF1DC;color:#6B4A12}
+#tb .box{background:#FFFFFF;border:1px solid #BFDCD6;border-radius:12px;padding:14px 16px;margin-bottom:12px;color:#17302D}
+#tb .box .h,#tb .clue .h{font-size:13px;font-weight:600;color:#2F7F79;margin-bottom:4px}
+#tb .box p{font-size:16px;color:#17302D}
+#tb .clue{background:#FFFFFF;border:2px solid #2F7F79;border-radius:12px;padding:14px 16px;margin-bottom:16px;color:#17302D}
+#tb .clue p{color:#17302D}
+#tb mark{background:#CDEBE5;color:#1F5C57;padding:0 3px;border-radius:4px;font-weight:600}
+#tb .score{font-size:44px;font-weight:600;color:#1F5C57;margin:6px 0 2px}
+#tb .rev{background:#FFFFFF;border:1px solid #BFDCD6;border-radius:12px;padding:14px 16px;margin-bottom:12px;color:#17302D}
+#tb .rev .n{font-size:13px;font-weight:600;color:#2F7F79;margin-bottom:4px}
+#tb .rev .t{font-size:16px;font-weight:600;margin-bottom:8px;color:#17302D}
+#tb .rev p{font-size:15px;margin-bottom:6px;color:#17302D}
+#tb .ck{font-weight:600;color:#1F5C57}
+#tb .reflect{background:#D4EAE5;border-radius:12px;padding:14px 16px;margin:4px 0 14px}
+#tb .reflect .h{font-size:16px;font-weight:600;margin-bottom:10px;color:#1F5C57}
+#tb .chip{display:block;width:100%;min-height:48px;text-align:left;font-size:15px;line-height:1.4;padding:12px 14px;margin:0 0 8px;background:#FFFFFF;color:#17302D;border:2px solid #BFDCD6;border-radius:10px;cursor:pointer;user-select:none}
+#tb .chip.sel{border-color:#2F7F79;background:#E3F3EA;color:#1F5A3A;font-weight:600}
+#tb .thanks{font-size:15px;color:#1F5C57;margin-top:6px}
+#tb .note{font-size:13px;color:#4B6B67;margin-top:12px;line-height:1.5}
+#tb .err{font-size:14px;color:#7A4B0C;margin:0 0 8px}
+</style>
+</head>
+<body>
+<h2 class="sr-only">Tie-Breaker Showdown: a three-question nursing study quiz with two answer choices per question, explanations, key clues, and a final score.</h2>
+<div id="tb"><div class="card" id="tbv">
+<h1>Tie-Breaker Showdown</h1>
+<p class="sub" style="margin-bottom:16px">Stuck between two answers? Practice with three NCLEX-style questions and learn the clue that breaks the tie.</p>
+<div class="box"><div class="h">How it works</div><p>Read the question, pick one of two answers, then see why it is right or wrong and which clue to look for.</p></div>
+<div class="btn" role="button" tabindex="0" onclick="window.tbStart&&window.tbStart()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click()}">Start</div>
+<p class="note">Study practice written for learning, not official NCLEX questions. Check answers against your course materials.</p>
+</div></div>
+<script>
+var TBQ=[
+{topic:"Prioritization",
+text:"A patient on the medical unit tells the nurse, \"I can't catch my breath.\" The patient is anxious and breathing fast. What should the nurse do first?",
+a:"Raise the head of the bed to a high Fowler's position",
+b:"Review the patient's medication list for possible causes",
+right:"a",
+why:"Breathing problems come first. Raising the head of the bed helps the lungs expand right away and is a quick action that makes breathing easier. Reviewing medications is useful, but it can wait until the patient is breathing more comfortably.",
+clue:"difficulty breathing",
+clueText:"Difficulty breathing points to airway and breathing, the top priority in the ABCs. When a question describes a breathing problem, look for the quick action that helps the patient breathe before anything else.",
+hi:["can't catch my breath","breathing fast"]},
+{topic:"Vital signs",
+text:"A patient with heart failure is due for a scheduled dose of digoxin. The nurse checks the apical pulse for one full minute and counts 52 beats per minute. What should the nurse do?",
+a:"Give the dose as scheduled and recheck the pulse later",
+b:"Hold the dose and notify the provider",
+right:"b",
+why:"Digoxin slows the heart rate. A pulse under 60 is too slow to give it safely, and giving more could slow the heart further and cause dangerous rhythms. The safe move is to hold the dose and let the provider decide next steps.",
+clue:"apical pulse of 52",
+clueText:"The number is the clue. A pulse below 60 before digoxin changes the answer from give to hold and report. Always compare the vital sign to the safe limit for that medication.",
+hi:["52 beats per minute","digoxin"]},
+{topic:"Patient safety",
+text:"An older adult with new confusion keeps trying to climb out of bed alone. The patient has no injuries so far. Which action should the nurse take first?",
+a:"Apply wrist restraints to keep the patient in bed",
+b:"Lower the bed, turn on the bed alarm, and check on the patient often",
+right:"b",
+why:"Restraints are a last resort because they can cause injury, increase agitation, and take away dignity. Safer, simpler steps come first, such as a low bed, an alarm, and frequent checks. Try the least restrictive option that keeps the patient safe.",
+clue:"least restrictive option",
+clueText:"When two answers both aim to keep the patient safe, choose the one that limits the patient's freedom the least. Restraints only come after less restrictive options have been tried.",
+hi:["keeps trying to climb out of bed","no injuries so far"]}
+];
+var TBL=["Difficulty breathing means airway and breathing come first","A pulse under 60 before digoxin means hold and notify","Choose the least restrictive safe option first","Reading the key numbers and words in the question"];
+var tbI=0,tbP=[],tbS=0,tbLearn=null;
+var TBK=' role="button" tabindex="0" onkeydown="if(event.key===\'Enter\'||event.key===\' \'){event.preventDefault();this.click()}"';
+function tbEsc(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")}
+function tbHl(t,arr){var o=tbEsc(t);for(var k=0;k<arr.length;k++){var e=tbEsc(arr[k]);o=o.replace(e,"<mark>"+e+"</mark>")}return o}
+function tbV(){return document.getElementById("tbv")}
+function tbWelcome(){
+tbI=0;tbP=[];tbS=0;tbLearn=null;
+tbV().innerHTML='<h1>Tie-Breaker Showdown</h1><p class="sub" style="margin-bottom:16px">Stuck between two answers? Practice with three NCLEX-style questions and learn the clue that breaks the tie.</p><div class="box"><div class="h">How it works</div><p>Read the question, pick one of two answers, then see why it is right or wrong and which clue to look for.</p></div><div class="btn"'+TBK+' onclick="window.tbStart()">Start</div><p class="note">Study practice written for learning, not official NCLEX questions. Check answers against your course materials.</p>';
+}
+function tbStart(){tbI=0;tbP=[];tbS=0;tbShow()}
+function tbShow(){
+var q=TBQ[tbI];
+tbV().innerHTML='<div class="meta"><span>Question '+(tbI+1)+' of 3</span><span>Pick one answer</span></div><div class="bar"><div style="width:'+Math.round(tbI/3*100)+'%"></div></div><span class="tag">'+q.topic+'</span><p class="q">'+tbEsc(q.text)+'</p><div class="opt"'+TBK+' onclick="tbAnswer(\'a\')"><span class="l">A.</span><span class="tx">'+tbEsc(q.a)+'</span></div><div class="opt"'+TBK+' onclick="tbAnswer(\'b\')"><span class="l">B.</span><span class="tx">'+tbEsc(q.b)+'</span></div>';
+}
+function tbAnswer(k){
+var q=TBQ[tbI],ok=(k===q.right);
+tbP[tbI]=k;if(ok)tbS++;
+var btns="",xs=["a","b"];
+for(var n=0;n<2;n++){var x=xs[n],cls="opt";
+if(x===q.right)cls+=" right";else if(x===k)cls+=" wrong";else cls+=" dim";
+btns+='<div class="'+cls+'"><span class="l">'+x.toUpperCase()+'.</span><span class="tx">'+tbEsc(q[x])+'</span></div>';}
+var verdict=ok?'<div class="verdict good">That is correct. Nice work.</div>':'<div class="verdict try">Not this time, and that is okay. The correct answer is '+q.right.toUpperCase()+'.</div>';
+var last=(tbI===2);
+tbV().innerHTML='<div class="meta"><span>Question '+(tbI+1)+' of 3</span><span>'+q.topic+'</span></div><div class="bar"><div style="width:'+Math.round((tbI+1)/3*100)+'%"></div></div><p class="q">'+tbHl(q.text,q.hi)+'</p>'+btns+verdict+'<div class="box"><div class="h">Why</div><p>'+tbEsc(q.why)+'</p></div><div class="clue"><div class="h">Key clue</div><p><mark>'+tbEsc(q.clue)+'</mark></p><p style="margin-top:6px">'+tbEsc(q.clueText)+'</p></div><div class="btn"'+TBK+' onclick="tbNext()">'+(last?"See my score":"Next question")+'</div>';
+}
+function tbNext(){if(tbI===2){tbResults()}else{tbI++;tbShow()}}
+function tbResults(){
+var msg=tbS===3?"Great job. You spotted every clue.":tbS===2?"Nice work. A quick look at the review and you have it.":"Good start. The review below shows the clue for each question.";
+var rev="";
+for(var n=0;n<3;n++){var q=TBQ[n],ok=tbP[n]===q.right;
+rev+='<div class="rev"><div class="n">Question '+(n+1)+' · '+q.topic+' · '+(ok?"Correct":"Review this one")+'</div><div class="t">'+tbEsc(q.text)+'</div><p><span class="ck">Your answer:</span> '+tbP[n].toUpperCase()+'. '+tbEsc(q[tbP[n]])+'</p>'+(ok?"":'<p><span class="ck">Correct answer:</span> '+q.right.toUpperCase()+'. '+tbEsc(q[q.right])+'</p>')+'<p><span class="ck">Why:</span> '+tbEsc(q.why)+'</p><p><span class="ck">Key clue:</span> <mark>'+tbEsc(q.clue)+'</mark></p></div>';}
+var chips="";
+for(var c=0;c<TBL.length;c++){chips+='<div class="chip"'+TBK+' onclick="tbPick('+c+')" id="chip'+c+'">'+tbEsc(TBL[c])+'</div>';}
+tbV().innerHTML='<div class="meta"><span>All done</span><span>3 of 3</span></div><div class="bar"><div style="width:100%"></div></div><h1>Your score</h1><div class="score">'+tbS+' of 3</div><p class="sub" style="margin-bottom:16px">'+msg+'</p><div class="reflect"><div class="h">Which clue will you watch for next time?</div>'+chips+'<p class="thanks" id="th" style="display:none"></p></div><p style="font-size:14px;font-weight:600;color:#3F5F5B;margin-bottom:8px">Review your answers</p>'+rev+'<p class="err" id="er" style="display:none">Choose a clue above first, then you can try again.</p><div class="btn alt"'+TBK+' onclick="tbAgain()">Try again</div>';
+}
+function tbPick(c){
+for(var n=0;n<TBL.length;n++){document.getElementById("chip"+n).className="chip"+(n===c?" sel":"")}
+tbLearn=TBL[c];
+document.getElementById("er").style.display="none";
+var th=document.getElementById("th");th.style.display="block";th.textContent="Great pick. Keep this in mind: "+tbLearn+".";
+}
+function tbAgain(){
+if(!tbLearn){document.getElementById("er").style.display="block";return}
+tbWelcome();
+}
+window.tbStart=tbStart;window.tbAnswer=tbAnswer;window.tbNext=tbNext;window.tbPick=tbPick;window.tbAgain=tbAgain;window.tbWelcome=tbWelcome;
+</script>
+</body>
+</html>
